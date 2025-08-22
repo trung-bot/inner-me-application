@@ -5,6 +5,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:do_not_disturb/do_not_disturb.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inner_me_application/core/services/audio/audio_service_singleton.dart';
 import 'package:inner_me_application/core/style.dart';
 import 'dart:io';
 import 'package:app_settings/app_settings.dart';
@@ -56,20 +57,38 @@ class _HomePageState extends State<Homepage> {
           }
         }
       });
+    } else {
+      playMusic();
     }
   }
+
+  late Timer _timer;
+  int _currentPage = 0;
+  final int _totalPages = 5; // Example: total number of pages
 
   @override
   void initState() {
     super.initState();
     try {
       if (Platform.isIOS) {
-            _initAudio();
-          }
-    } catch (e){
+        _initAudio();
+      }
+    } catch (e) {
       print('e');
     }
-    
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_currentPage < _totalPages - 1) {
+        _currentPage++;
+      } else {
+        _timer.cancel();
+      }
+      _controller.animateToPage(
+        _currentPage,
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeIn,
+      );
+    });
   }
 
   Future<void> _initAudio() async {
@@ -143,7 +162,7 @@ class _HomePageState extends State<Homepage> {
                 onPressed: () {
                   toggleDndMode();
                   Timer.periodic(Duration(seconds: 1), (timer) {
-                      playMusic();
+                    playMusic();
                   });
                 },
                 style: ElevatedButton.styleFrom(
@@ -166,7 +185,6 @@ class _HomePageState extends State<Homepage> {
                   ),
                 ),
               ),
-             
             ],
           ),
         );
@@ -215,169 +233,161 @@ class _HomePageState extends State<Homepage> {
     }
   }
 
+  final PageController _controller = PageController();
+  final List<String> texts = [
+    'Bạn có nghe thấy không?\nĐã bao lâu rồi bạn chưa trò chuyện với chính mình...',
+    'Chúng ta thường đi qua những ngày buồn mà chẳng kịp gọi tên cảm xúc.\nNhững câu hỏi bị bỏ quên, những cảm xúc chưa từng được lắng nghe ...',
+    'Âm nhạc là người bạn lặng lẽ – hãy để nó ngồi bên bạn hôm nay...',
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final double height = MediaQuery.of(context).size.height;
     return Scaffold(
-      body: CarouselSlider(
-        options: CarouselOptions(
-          height: height,
-          viewportFraction: 1.0,
-          enlargeCenterPage: false,
-          enableInfiniteScroll: false,
-          autoPlay: false,
+      body: Container(
+        padding: EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/homepage/slide-1.png'),
+            fit: BoxFit.fill,
+          ),
         ),
-        items: [
-          HomeSlide(
-            image: imagList[0],
-            body: Column(
-              children: [
-                Text(
-                  'Inner Me',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    color: IMAppColor.appWhite,
-                    fontSize: 30,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          HomeSlide(
-            image: imagList[0],
-            body: Column(
-              children: [
-                Text(
-                  'Inner Me',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    color: IMAppColor.appWhite,
-                    fontSize: 30,
-                  ),
-                ),
+        child: PageView.builder(
+          controller: _controller,
+          itemCount: texts.length + 1,
+          itemBuilder: (context, index) {
+            final bool isLastPage = index == texts.length;
+            return AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                double value = 1.0;
+                if (_controller.position.haveDimensions) {
+                  value = _controller.page! - index;
+                  value = (1 - (value.abs() * 0.5)).clamp(0.0, 1.0);
+                }
+                return Opacity(
+                  opacity: value,
+                  child: Transform.translate(
+                    offset: Offset(50 * (1 - value), 0), // trượt ngang nhẹ
+                    child: Builder(
+                      builder: (context) {
+                        if (!isLastPage) {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Inner Me',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineLarge!
+                                    .copyWith(
+                                      color: IMAppColor.appWhite,
+                                      fontSize: 30,
+                                    ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                texts[index],
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(
+                                      color: IMAppColor.appWhite,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Inner Me',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineLarge!
+                                    .copyWith(
+                                      color: IMAppColor.appWhite,
+                                      fontSize: 30,
+                                    ),
+                              ),
+                              SizedBox(height: 10),
+                              Text(
+                                'Bạn sẵn sàng chưa?',
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(color: IMAppColor.appWhite),
+                              ),
+                              Text(
+                                'Chuyến phiêu lưu vào nội tâm đang chờ bạn mở trang đầu tiên',
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(color: IMAppColor.appWhite),
+                                textAlign: TextAlign.center,
+                              ),
+                              SizedBox(height: 10),
+                              FilledButton(
+                                onPressed: () {context.go('/playlist');},
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                      color: IMAppColor.appGrey,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  backgroundColor: IMAppColor.appWhite,
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text(
+                                    'Inner Me Playlist dành cho bạn',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: IMAppColor.appBlack,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 10),
 
-                SizedBox(height: 10),
-                Text(
-                  'Bạn có nghe thấy không?',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                ),
-                Text(
-                  'Đã bao lâu rồi bạn chưa trò chuyện với chính mình...',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          HomeSlide(
-            image: imagList[0],
-            body: Column(
-              children: [
-                Text(
-                  'Inner Me',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    color: IMAppColor.appWhite,
-                    fontSize: 30,
-                  ),
-                ),
-
-                SizedBox(height: 10),
-                Text(
-                  'Chúng ta thường đi qua những ngày buồn mà chẳng kịp gọi tên cảm xúc.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                  textAlign: TextAlign.center,
-                ),
-                Text(
-                  'Những câu hỏi bị bỏ quên, những cảm xúc chưa từng được lắng nghe ...',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-          HomeSlide(
-            image: imagList[0],
-            body: Column(
-              children: [
-                Text(
-                  'Inner Me',
-                  style: Theme.of(context).textTheme.headlineLarge!.copyWith(
-                    color: IMAppColor.appWhite,
-                    fontSize: 30,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Bạn sẵn sàng chưa?',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                ),
-                Text(
-                  'Chuyến phiêu lưu vào nội tâm đang chờ bạn mở trang đầu tiên',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium!.copyWith(color: IMAppColor.appWhite),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 10),
-
-                FilledButton(
-                  onPressed: openDiary,
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                      side: BorderSide(color: IMAppColor.appGrey, width: 1),
-                    ),
-                    backgroundColor: IMAppColor.appWhite,
-                    padding: EdgeInsets.zero,
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.all(12),
-                    child: Text(
-                      'Mở nhật ký',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: IMAppColor.appBlack,
-                      ),
-                      textAlign: TextAlign.center,
+                              FilledButton(
+                                onPressed: () {},
+                                style: ElevatedButton.styleFrom(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    side: BorderSide(
+                                      color: IMAppColor.appGrey,
+                                      width: 1,
+                                    ),
+                                  ),
+                                  backgroundColor: IMAppColor.appWhite,
+                                  padding: EdgeInsets.zero,
+                                ),
+                                child: Padding(
+                                  padding: EdgeInsets.all(12),
+                                  child: Text(
+                                    'Mở nhật ký',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: IMAppColor.appBlack,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }
+                      },
                     ),
                   ),
-                ),
-                 FilledButton(
-                onPressed: () {
-                  context.go('/audio');
-                },
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: IMAppColor.appGrey, width: 1),
-                  ),
-                  backgroundColor: IMAppColor.appWhite,
-                  padding: EdgeInsets.zero,
-                ),
-                child: Padding(
-                  padding: EdgeInsets.all(12),
-                  child: Text(
-                    'Phát nhạc',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: IMAppColor.appBlack,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
-              ],
-            ),
-          ),
-        ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }

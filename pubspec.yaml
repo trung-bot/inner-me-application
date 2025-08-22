@@ -31,13 +31,28 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
 
+
 flutter:
   uses-material-design: true
   assets:
-
+    - assets/
     - assets/images/
     - assets/images/homepage/
     - assets/sounds/
+    - assets/background.png
 
 
 
+flutter_native_splash:
+  android: true
+  ios: true
+
+  # fallback màu nền
+  color: "#ffffff"
+
+  # Chỉ background image
+  background_image: assets/background.png
+
+  android_12:
+    color: "#ffffff"
+    background_image: assets/background.png

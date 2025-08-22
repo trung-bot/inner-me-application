@@ -1,10 +1,13 @@
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
+import 'package:inner_me_application/core/services/audio/audio_service_singleton.dart';
 import 'package:inner_me_application/core/style.dart';
 import 'package:inner_me_application/core/app_routes.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 
-
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AudioServiceSingleton.init(); // init Audio Service
   runApp(InnerMeApp());
 }
 
