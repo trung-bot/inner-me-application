@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:go_router/go_router.dart';
 import 'package:inner_me_application/screens/mainpage/diadry/diary.dart';
 
 class MainPage extends StatefulWidget {
@@ -24,12 +25,14 @@ class _MainPageState extends State<MainPage> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home', ),
           BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Business'),
           BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
+        
+
       ),
     );
   }
