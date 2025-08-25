@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:audio_session/audio_session.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:do_not_disturb/do_not_disturb.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:inner_me_application/core/services/audio/audio_service_singleton.dart';
 import 'package:inner_me_application/core/style.dart';
 import 'dart:io';
 import 'package:app_settings/app_settings.dart';
@@ -74,20 +72,20 @@ class _HomePageState extends State<Homepage> {
         _initAudio();
       }
     } catch (e) {
-      print('e');
+      return;
     }
 
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < _totalPages - 1) {
+      if (_currentPage < _totalPages - 2) {
         _currentPage++;
+        _controller.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 500),
+          curve: Curves.easeIn,
+        );
       } else {
         _timer.cancel();
       }
-      _controller.animateToPage(
-        _currentPage,
-        duration: const Duration(milliseconds: 500),
-        curve: Curves.easeIn,
-      );
     });
   }
 
@@ -115,7 +113,7 @@ class _HomePageState extends State<Homepage> {
       await player.play();
       await Future.delayed(Duration(seconds: 2));
     } catch (e) {
-      print(e);
+      return;
     }
 
     if (isProbablyDnd == null) {
@@ -220,7 +218,7 @@ class _HomePageState extends State<Homepage> {
     try {
       await _dndPlugin.openNotificationPolicyAccessSettings();
     } catch (e) {
-      print('Error opening notification policy access settings: $e');
+      return;
     }
   }
 
@@ -229,7 +227,7 @@ class _HomePageState extends State<Homepage> {
       await _dndPlugin.setInterruptionFilter(filter);
       _checkDndEnabled();
     } catch (e) {
-      print('Error setting interruption filter: $e');
+      return;
     }
   }
 
@@ -326,7 +324,9 @@ class _HomePageState extends State<Homepage> {
                               ),
                               SizedBox(height: 10),
                               FilledButton(
-                                onPressed: () {context.go('/playlist');},
+                                onPressed: () {
+                                  context.go('/playlist');
+                                },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -353,7 +353,9 @@ class _HomePageState extends State<Homepage> {
                               SizedBox(height: 10),
 
                               FilledButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  context.go('/main');
+                                },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
