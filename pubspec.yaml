@@ -24,6 +24,8 @@ dependencies:
   app_settings: ^6.1.1
   audio_service: ^0.18.18
   flutter_native_splash: ^2.4.6
+  intl: ^0.20.2
+  path_provider: ^2.1.5
 
 dev_dependencies:
   flutter_test:
