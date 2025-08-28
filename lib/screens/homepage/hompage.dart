@@ -72,11 +72,12 @@ class _HomePageState extends State<Homepage> {
         _initAudio();
       }
     } catch (e) {
-      return;
+      debugPrint('error--- $e');
     }
 
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPage < _totalPages - 2) {
+
         _currentPage++;
         _controller.animateToPage(
           _currentPage,
@@ -354,7 +355,7 @@ class _HomePageState extends State<Homepage> {
 
                               FilledButton(
                                 onPressed: () {
-                                  context.go('/main');
+                                  context.go('/journal');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(

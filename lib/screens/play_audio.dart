@@ -44,7 +44,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
     });
 
     await _player.setAsset(widget.audioAsset);
-    print(_player);
   }
 
   @override
