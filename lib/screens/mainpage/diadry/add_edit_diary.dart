@@ -64,7 +64,7 @@ class _AddEditDiaryState extends State<AddEditDiary> {
                   ),
                   decoration: const InputDecoration(
                     border: InputBorder.none, 
-                    hintText: "Hello world, ...",
+                    hintText: "Hello world ...",
                     hintStyle: TextStyle(color: Colors.white54),
                   ),
                 ),

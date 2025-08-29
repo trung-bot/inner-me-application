@@ -1,8 +1,9 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:inner_me_application/core/model/diary_model.dart';
+import 'package:inner_me_application/core/services/file/diary_file.services.dart';
 import 'package:inner_me_application/screens/mainpage/diadry/add_edit_diary.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:inner_me_application/screens/mainpage/diadry/diary_item.dart';
+
 class DiaryPage extends StatefulWidget {
   const DiaryPage({super.key});
 
@@ -13,61 +14,97 @@ class DiaryPage extends StatefulWidget {
 }
 
 class _DiaryPageState extends State<DiaryPage> {
-  late dynamic dataSources;
-   // get path file diary.txt
-  Future<File> _getDiaryFile() async {
-    final dir = await getApplicationDocumentsDirectory();
-    return File("${dir.path}/diary.txt");
+  late List<DiaryModel> dataSources = [];
+
+  Future<void> _saveDiary(String text, DateTime date) async {
+
+    DiaryFileServices.instance.saveDiary(text, date).then((x) {
+      if (mounted) {
+        showSuccessDialog(context, 'Create Diary Success').then((v) {
+          _readDiary();
+        });
+      }
+    });
   }
 
-  Future<void> _saveDiary(String text) async {
-    final file = await _getDiaryFile();
-    print('file----');
-    print(file);
-
-    await file.writeAsString("$text\n", mode: FileMode.append); // ghi nối tiếp
+  Future showSuccessDialog(BuildContext context, String message) {
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: Colors.green[50],
+          title: const Text("Success", style: TextStyle(color: Colors.green)),
+          content: Text(message, style: const TextStyle(color: Colors.black)),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _readDiary() async {
-    try {
-      final file = await _getDiaryFile();
-      final content = await file.readAsString();
-      setState(() {
-        dataSources = content;
-        print(dataSources);
-      });
-    } catch (e) {
-      setState(() {
-        dataSources = "Chưa có nhật ký nào!";
-      });
-    }
+    var response = await DiaryFileServices.instance.readDiary();
+    setState(() {
+      dataSources = response;
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _readDiary();    
+    _readDiary();
+  }
+
+  Widget _buildListItem(context, index) {
+    var item = dataSources[index];
+    return Padding(padding: EdgeInsetsGeometry.only(bottom: 20), 
+    child: DiaryItem(item.content, 
+    
+   item.startDate),) ;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('images/main/background.png'), fit: BoxFit.fill)
-        )
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.only(top: 30),
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/background.png'),
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  _buildListItem,
+                  childCount: dataSources.length,
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
 
-      floatingActionButton:  FloatingActionButton(
-        onPressed: (){
-          showDialog(context: context, builder: (context) => AddEditDiary()).then((v) {
-            _saveDiary('312312');
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showDialog(
+            context: context,
+            builder: (context) => AddEditDiary(),
+          ).then((v) {
+            _saveDiary(v, DateTime.now());
           });
         },
         tooltip: 'Add',
         child: const Icon(Icons.add),
       ),
-     
     );
   }
 }

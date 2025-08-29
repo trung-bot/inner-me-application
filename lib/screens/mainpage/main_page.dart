@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class MainPage extends StatefulWidget {
   final Widget child;
@@ -9,26 +10,49 @@ class MainPage extends StatefulWidget {
     return _MainPageState();
   }
 }
-var _selectedIndex = 0;
 class _MainPageState extends State<MainPage> {
+
+    final List<String> _currentNavigationItemsByName = ['calendar','journal','settings'];
+
+    int getCurrentIndex() {
+    GoRouter router = GoRouter.of(context);
+    final String currentRouteName = router.state.name ?? '';
+    print(currentRouteName) ;
+
+    var idx = _currentNavigationItemsByName.indexOf(currentRouteName);
+    return idx >= 0 ? idx: 0;
+
+    // final String location = router.state.uri.path;
+    // if (location.startsWith('/home')) {
+    //   return 0;
+    // } else if (location.startsWith('/events')) {
+    //   return 1;
+    // } else if (location.startsWith('/mycharges')) {
+    //   return 2;
+    // } else if (location.startsWith('/vehicle-bookings')) {
+    //   return 3;
+    // }
+    //return 0; // Default to home if no match
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(image: AssetImage('images/main/background.png'), fit: BoxFit.fill)
-        ),
+        
         child: widget.child,
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home', ),
-          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Jo'),
-          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
+          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar', ),
+          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Journal'),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
-        
+        currentIndex: getCurrentIndex(),
+        selectedItemColor: const Color.fromARGB(255, 8, 8, 8),
+        onTap: (index) {
+          
+        },
 
       ),
     );
