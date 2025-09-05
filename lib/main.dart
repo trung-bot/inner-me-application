@@ -7,6 +7,7 @@ import 'package:loader_overlay/loader_overlay.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await AudioServiceSingleton.init(); // init Audio Service
+
   runApp(InnerMeApp());
 }
 

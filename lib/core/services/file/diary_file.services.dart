@@ -20,10 +20,20 @@ class DiaryFileServices {
     content += text;
 
     final file = await getDiaryFile();
-    print('content to save--');
-    print(content);
 
     await file.writeAsString(content, mode: FileMode.append); // ghi nối tiếp
+  }
+
+  String exportLogs(List<DiaryModel> logs) {
+  return logs.map((log) => "=== ${DateFormat(dateFormat).format(log.startDate)} ===${log.content}").join("\n");
+  }
+
+  Future<void> updateDiary(int index, String text) async {
+    final file = await getDiaryFile();
+    var diary = await readDiary();
+    diary[index].content = text;
+
+    await file.writeAsString(exportLogs(diary), mode: FileMode.write); // ghi nối tiếp
   }
 
   Future<List<DiaryModel>> readDiary() async {
@@ -32,8 +42,6 @@ class DiaryFileServices {
       final content = await file.readAsString();
 
       List<DiaryModel> entries = [];
-      print('conte----');
-      print(content);
 
       // Regex tìm các section
       final regex = RegExp(
@@ -47,8 +55,6 @@ class DiaryFileServices {
         final text = m.group(2)!.trim();
         entries.add(DiaryModel(text, DateFormat(dateFormat).parse(date)));
       }
-      print(entries.length);
-
       return entries;
     } catch (e) {
       return [];

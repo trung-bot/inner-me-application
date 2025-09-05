@@ -18,35 +18,37 @@ class DiaryItem extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Cột ngày bên trái
-          Container(
-            width: 60,
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            child: Column(
-              children: [
-                Text(
-                  DateFormat('EEE').format(startDate),
-                  style: const TextStyle(
-                    color: Colors.white70,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
+          InkWell(
+            child: Container(
+              width: 60,
+              padding: const EdgeInsets.symmetric(vertical: 4),
+              child: Column(
+                children: [
+                  Text(
+                    DateFormat('EEE').format(startDate),
+                    style: const TextStyle(
+                      color: Colors.white70,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
                   ),
-                ),
-                Text(
-                  DateFormat('dd').format(startDate),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
+                  Text(
+                    DateFormat('dd').format(startDate),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                Text(
-                  "12:00 AM", // bạn có thể format theo giờ thực
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 10,
+                  Text(
+                    "12:00 AM", // bạn có thể format theo giờ thực
+                    style: const TextStyle(
+                      color: Colors.white54,
+                      fontSize: 10,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
 

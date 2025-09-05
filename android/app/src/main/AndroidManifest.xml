@@ -71,5 +71,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK"/>
+    <!-- Nếu muốn truy cập file ngoài assets -->
+        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
 </manifest>

@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:inner_me_application/screens/mainpage/diadry/diary.dart';
 import 'package:inner_me_application/screens/mainpage/main_page.dart';
+import 'package:inner_me_application/screens/playlist_page/list_audio.dart';
 import 'package:inner_me_application/screens/playlist_page/playlist_page.dart';
 import 'package:inner_me_application/screens/homepage/hompage.dart';
 import 'package:inner_me_application/screens/play_audio.dart';
@@ -24,6 +25,10 @@ RouterConfig<Object> routerConfig = GoRouter(
      GoRoute(path: '/home', name: 'home', builder: (context, state) => Homepage()),
      GoRoute(path: '/audio', name: 'audio', builder: (context, state) => AudioPlayerScreen(audioAsset: 'assets/town.mp3')),
      GoRoute(path: '/playlist', name: 'audio2', builder: (context, state) => PlaylistPage()),
+     GoRoute(path: '/assets_music', name: 'assets_music', builder: (context, state) => AssetsMusicPlayer()),
+
+     
+     GoRoute(path: '/', redirect: (context, state) => '/home'),
 
 
   ]

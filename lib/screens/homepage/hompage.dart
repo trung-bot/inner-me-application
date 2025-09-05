@@ -62,7 +62,7 @@ class _HomePageState extends State<Homepage> {
 
   late Timer _timer;
   int _currentPage = 0;
-  final int _totalPages = 5; // Example: total number of pages
+  final int _totalPages = 4; // Example: total number of pages
 
   @override
   void initState() {
@@ -76,7 +76,7 @@ class _HomePageState extends State<Homepage> {
     }
 
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
-      if (_currentPage < _totalPages - 2) {
+      if (_currentPage < _totalPages - 1) {
 
         _currentPage++;
         _controller.animateToPage(
@@ -88,6 +88,11 @@ class _HomePageState extends State<Homepage> {
         _timer.cancel();
       }
     });
+  }
+  @override
+  void dispose() {
+    super.dispose();
+    _timer.cancel();
   }
 
   Future<void> _initAudio() async {
@@ -131,6 +136,7 @@ class _HomePageState extends State<Homepage> {
     } catch (e) {
       return false;
     }
+
   }
 
   openDND() {

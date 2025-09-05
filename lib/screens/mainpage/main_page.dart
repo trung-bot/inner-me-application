@@ -10,17 +10,21 @@ class MainPage extends StatefulWidget {
     return _MainPageState();
   }
 }
+
 class _MainPageState extends State<MainPage> {
+  final List<String> _currentNavigationItemsByName = [
+    'home',
+    'journal',
+    'settings',
+  ];
 
-    final List<String> _currentNavigationItemsByName = ['calendar','journal','settings'];
-
-    int getCurrentIndex() {
+  int getCurrentIndex() {
     GoRouter router = GoRouter.of(context);
     final String currentRouteName = router.state.name ?? '';
-    print(currentRouteName) ;
+    print(currentRouteName);
 
     var idx = _currentNavigationItemsByName.indexOf(currentRouteName);
-    return idx >= 0 ? idx: 0;
+    return idx >= 0 ? idx : 0;
 
     // final String location = router.state.uri.path;
     // if (location.startsWith('/home')) {
@@ -38,22 +42,25 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        
-        child: widget.child,
-      ),
+      body: Container(child: widget.child),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.calendar_month), label: 'Calendar', ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Calendar',
+          ),
           BottomNavigationBarItem(icon: Icon(Icons.book), label: 'Journal'),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: 'Settings'),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings),
+            label: 'Settings',
+          ),
         ],
         currentIndex: getCurrentIndex(),
         selectedItemColor: const Color.fromARGB(255, 8, 8, 8),
         onTap: (index) {
-          
+          print(index);
+          context.go('/${_currentNavigationItemsByName[index]}');
         },
-
       ),
     );
   }
